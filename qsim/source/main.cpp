@@ -27,7 +27,16 @@ int main() {
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event)) {
+
+            // Let the view handle the event
             view.handle_event(event);
+
+            // Resize the viewmatrix
+            if (event.type == sf::Event::Resized) {
+                sf::Vector2f size(window.getSize().x, window.getSize().y);
+                sf::Vector2f center(size.x * 0.5f, size.y * 0.5f);
+                window.setView(sf::View(center, size));
+            }
         }
 
         // Update the simulation controller and view

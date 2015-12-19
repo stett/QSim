@@ -2,9 +2,7 @@
 #include "qsim/QSimConstants.h"
 #include "qsim/QSimModel.h"
 #include "qsim/QSimConstants.h"
-
-// Coordinate conversion macros
-#define QSIM_COORD_INDEX_TO_SPACE_X(n, space_min_x, space_range_x) ((double)n * space_range_x * qsim::N_INV + space_min_x)
+#include "qsim/QSimCoordinates.h"
 
 
 qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0), V_0(V_0) {
