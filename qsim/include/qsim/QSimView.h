@@ -1,5 +1,6 @@
 #ifndef QSIMVIEW_H
 #define QSIMVIEW_H
+#include <SFML/Graphics.hpp>
 #include <SFGUI/Window.hpp>
 #include <SFGUI/Desktop.hpp>
 #include "qsim/QSimModel.h"
@@ -15,8 +16,6 @@ namespace qsim {
 
         // View data
     private:
-        //sf::RenderWindow window;
-        //sfg::Window window;
         sfg::Desktop desktop;
 
         // 'Tors
@@ -33,7 +32,11 @@ namespace qsim {
     public:
         void handle_event(const sf::Event &event);
         void update();
-        void render();
+        void render(sf::RenderTarget& target, sf::RenderStates states);
+
+        // Internal draw methods
+    private:
+        void render_axes(sf::RenderTarget& target, sf::RenderStates states);
     };
 }
 

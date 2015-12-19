@@ -21,6 +21,9 @@ int main() {
     // While the QSim controller says to keep running, keep runnin'
     while (controller.get_status() == qsim::QSimController::Status::Run) {
 
+        // Set up render states
+        sf::RenderStates states;
+
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -35,7 +38,7 @@ int main() {
         window.clear(sf::Color::Black);
 
         // Render the view
-        view.render();
+        view.render(window, states);
 
         // Render the GUI
         gui.Display(window);

@@ -93,3 +93,15 @@ double qsim::QSimModel::x_max() {
 double qsim::QSimModel::x_range() {
     return _x_max - _x_min;
 }
+
+double qsim::QSimModel::y_min() {
+    return _y_min;
+}
+
+double qsim::QSimModel::y_max() {
+    return _y_max;
+}
+
+double qsim::QSimModel::y_range() {
+    return _y_max - _y_min;
+}
