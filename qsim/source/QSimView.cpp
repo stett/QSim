@@ -1,25 +1,31 @@
 #include <string>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <SFGUI/Window.hpp>
 #include <SFGUI/Desktop.hpp>
+#include <SFGUI/Label.hpp>
 #include "qsim/QSimView.h"
 #include "qsim/QSimModel.h"
 #include "qsim/QSimCoordinates.h"
 #include "qsim/complex_colors.h"
 
 
-qsim::QSimView::QSimView(QSimModel *model, QSimController *controller) : model(model), controller(controller) {
+qsim::QSimView::QSimView(QSimModel *model, QSimController *controller) : model(model), controller(controller), frames(0.0f), fps(0.0f) {
 
     // Set up the GUI controls
-    /*
     auto window = sfg::Window::Create();
-    window->SetTitle("Test Window");
+    window->SetTitle("Data");
+
+    label_fps = sfg::Label::Create();
+    label_normalization = sfg::Label::Create();
+    window->Add(label_fps);
+    window->Add(label_normalization);
+
     desktop.Add(window);
-    */
 
     // Set up initial settings
-    psi_color = sf::Color(100, 160, 230, 150);
+    psi_color = sf::Color(100, 160, 230, 30);
     V_color = sf::Color(255, 180, 100, 255);
     axes_color = sf::Color(80, 80, 80);
     text_color = sf::Color(200, 230, 25);
@@ -28,7 +34,7 @@ qsim::QSimView::QSimView(QSimModel *model, QSimController *controller) : model(m
     tick_size = 20.0;
     real_thickness = 3.0;
     imag_thickness = 1.0;
-    abs2_thickness = 4.5;
+    abs2_thickness = 6.0;
     y_min = -1.0;
     y_max = 2.0;
 }
@@ -52,6 +58,24 @@ void qsim::QSimView::handle_event(const sf::Event &event) {
 }
 
 void qsim::QSimView::update() {
+
+
+    // If the time on the clock has reached a second, record the fps
+    frames += 1.0f;
+    if (clock.getElapsedTime().asSeconds() >= 1.0f) {
+        fps = frames / clock.restart().asSeconds();
+        frames = 0.0f;
+    }
+
+    {   // Update GUI elements
+        char str[128];
+
+        sprintf(str, "FPS: %f", fps);
+        label_fps->SetText(str);
+
+        sprintf(str, "Norm: %f", model->get_psi_norm());
+        label_normalization->SetText(str);
+    }
 
     // Update SFGUI
     desktop.Update(1.0f);

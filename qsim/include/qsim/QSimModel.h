@@ -51,26 +51,19 @@ namespace qsim {
         void set_dt_iterations(double dt_iterations);
         void set_x_min(double x_min);
         void set_x_max(double x_max);
-        //void set_y_min(double y_min);
-        //void set_y_max(double y_max);
-        //void set_K_max(double K_max);
-        //void set_E_min(double E_min);
-        //void set_E_max(double E_max);
 
         // Getters
     public:
         double const *get_psi() const;
         double const *get_psi_abs2() const;
         double const *get_V() const;
+        double get_psi_norm() const;
         double mass() const;
         double dt_size() const;
         double dt_iterations() const;
         double x_min() const;
         double x_max() const;
         double x_range() const;
-        //double y_min() const;
-        //double y_max() const;
-        //double y_range() const;
         double K_max() const;
         double E_min() const;
         double E_max() const;

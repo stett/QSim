@@ -1,9 +1,12 @@
 #ifndef QSIMVIEW_H
 #define QSIMVIEW_H
+#include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <SFGUI/Window.hpp>
 #include <SFGUI/Desktop.hpp>
+#include <SFGUI/Label.hpp>
 #include "qsim/QSimModel.h"
 #include "qsim/QSimController.h"
 
@@ -19,6 +22,14 @@ namespace qsim {
     private:
         sfg::Desktop desktop;
         sf::Font font;
+        sf::Clock clock;
+        float frames;
+        float fps;
+
+        // GUI data
+    private:
+        std::shared_ptr<sfg::Label> label_fps;
+        std::shared_ptr<sfg::Label> label_normalization;
 
         // Settings
     private:

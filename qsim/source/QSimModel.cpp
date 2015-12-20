@@ -15,7 +15,7 @@ qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0),
     _x_min = -1.0;
     _x_max = 10.0;
     _mass = EMASS;
-    _dt_size = 0.0061;
+    _dt_size = 0.006;
     _dt_iterations = 1;
     //
     // END TEMP
@@ -99,6 +99,7 @@ void qsim::QSimModel::set_x_max(double x_max) { _x_max = x_max; }
 double const *qsim::QSimModel::get_psi() const { return psi; }
 double const *qsim::QSimModel::get_psi_abs2() const { return psi_abs2; }
 double const *qsim::QSimModel::get_V() const { return V; }
+double qsim::QSimModel::get_psi_norm() const { return psi_norm; }
 double qsim::QSimModel::mass() const { return _mass; }
 double qsim::QSimModel::dt_size() const { return _dt_size; }
 double qsim::QSimModel::dt_iterations() const { return _dt_iterations; }
