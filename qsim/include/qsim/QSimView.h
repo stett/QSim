@@ -7,6 +7,7 @@
 #include <SFGUI/Window.hpp>
 #include <SFGUI/Desktop.hpp>
 #include <SFGUI/Label.hpp>
+#include <SFGUI/Box.hpp>
 #include "qsim/QSimModel.h"
 #include "qsim/QSimController.h"
 
@@ -28,8 +29,9 @@ namespace qsim {
 
         // GUI data
     private:
-        std::shared_ptr<sfg::Label> label_fps;
-        std::shared_ptr<sfg::Label> label_normalization;
+        std::shared_ptr<sfg::Box> data_box;
+        std::shared_ptr<sfg::Label> fps_label;
+        std::shared_ptr<sfg::Label> norm_label;
 
         // Settings
     private:

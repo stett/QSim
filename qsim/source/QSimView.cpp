@@ -5,6 +5,7 @@
 #include <SFGUI/Window.hpp>
 #include <SFGUI/Desktop.hpp>
 #include <SFGUI/Label.hpp>
+#include <SFGUI/Box.hpp>
 #include "qsim/QSimView.h"
 #include "qsim/QSimModel.h"
 #include "qsim/QSimCoordinates.h"
@@ -16,13 +17,16 @@ qsim::QSimView::QSimView(QSimModel *model, QSimController *controller) : model(m
     // Set up the GUI controls
     auto window = sfg::Window::Create();
     window->SetTitle("Data");
-
-    label_fps = sfg::Label::Create();
-    label_normalization = sfg::Label::Create();
-    window->Add(label_fps);
-    window->Add(label_normalization);
-
     desktop.Add(window);
+
+    data_box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+    window->Add(data_box);
+
+    fps_label = sfg::Label::Create();
+    data_box->Pack(fps_label);
+
+    norm_label = sfg::Label::Create();
+    data_box->Pack(norm_label);
 
     // Set up initial settings
     psi_color = sf::Color(100, 160, 230, 30);
@@ -71,10 +75,10 @@ void qsim::QSimView::update() {
         char str[128];
 
         sprintf(str, "FPS: %f", fps);
-        label_fps->SetText(str);
+        fps_label->SetText(str);
 
         sprintf(str, "Norm: %f", model->get_psi_norm());
-        label_normalization->SetText(str);
+        norm_label->SetText(str);
     }
 
     // Update SFGUI
