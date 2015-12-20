@@ -1,6 +1,8 @@
+#include <stdexcept>
 #include <gsl/gsl_complex.h>
 #include "qsim/QSimConstants.h"
 #include "qsim/QSimModel.h"
+#include "qsim/QSimMath.h"
 #include "qsim/QSimConstants.h"
 #include "qsim/QSimCoordinates.h"
 
@@ -12,8 +14,9 @@ qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0),
     //
     _x_min = -1.0;
     _x_max = 10.0;
-    _y_min = -1.0;
-    _y_max = 2.0;
+    _mass = EMASS;
+    _dt_size = 0.006;
+    _dt_iterations = 1;
     //
     // END TEMP
     //
@@ -45,12 +48,11 @@ qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0),
     compute_psi_abs2();
 }
 
-qsim::QSimModel::~QSimModel() {
-
-}
+qsim::QSimModel::~QSimModel() {}
 
 void qsim::QSimModel::evolve() {
-
+    for (int i = 0; i < _dt_iterations; ++i)
+        QSimMath::U(this);
 }
 
 void qsim::QSimModel::compute_psi_abs2() {
@@ -78,17 +80,47 @@ void qsim::QSimModel::compute_psi_abs2() {
     psi_norm *= x_range() * N_INV;
 }
 
+void qsim::QSimModel::set_dt_size(double dt_size) {
+    if (dt_size <= 0.0f)
+        throw std::invalid_argument("dt_size");
+    _dt_size = dt_size;
+}
+void qsim::QSimModel::set_dt_iterations(double dt_iterations) {
+    if (dt_iterations <= 0.0f)
+        throw std::invalid_argument("dt_iterations");
+}
 void qsim::QSimModel::set_x_min(double x_min) { _x_min = x_min; }
 void qsim::QSimModel::set_x_max(double x_max) { _x_max = x_max; }
-void qsim::QSimModel::set_y_min(double y_min) { _y_min = y_min; }
-void qsim::QSimModel::set_y_max(double y_max) { _y_max = y_max; }
-
 double const *qsim::QSimModel::get_psi() const { return psi; }
 double const *qsim::QSimModel::get_psi_abs2() const { return psi_abs2; }
 double const *qsim::QSimModel::get_V() const { return V; }
+double qsim::QSimModel::mass() const { return _mass; }
+double qsim::QSimModel::dt_size() const { return _dt_size; }
+double qsim::QSimModel::dt_iterations() const { return _dt_iterations; }
 double qsim::QSimModel::x_min() const { return _x_min; }
 double qsim::QSimModel::x_max() const { return _x_max; }
 double qsim::QSimModel::x_range() const { return _x_max - _x_min; }
-double qsim::QSimModel::y_min() const { return _y_min; }
-double qsim::QSimModel::y_max() const { return _y_max; }
-double qsim::QSimModel::y_range() const { return _y_max - _y_min; }
+
+double qsim::QSimModel::K_max() const {
+    double _K_max;
+    _K_max = M_PI * HbC * N / _x_range;
+    _K_max = _K_max * _K_max / (2 * _mass);
+    return _K_max;
+}
+
+double qsim::QSimModel::E_min() const {
+    double V_min = QSimMath::min_real(V);
+    double _E_min = (0 < V_min) ? 0 : V_min;
+    return _E_min;
+}
+
+double qsim::QSimModel::E_max() const {
+    double V_max = QSimMath::max_real(V);
+    double _E_max = K_max() + V_max;
+    return _E_max;
+}
+
+double qsim::QSimModel::E_range() const {
+    double _E_range = E_max() - E_min();
+    return _E_range;
+}

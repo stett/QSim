@@ -24,7 +24,11 @@ int main(int argc, char **argv) {
     std::string name = aux.substr(pos + 1);
 
     // Create a window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "QSim");
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 4;
+    settings.majorVersion = 3;
+    settings.minorVersion = 1;
+    sf::RenderWindow window(sf::VideoMode(800, 600), "QSim", sf::Style::Default, settings);
 
     // Initialize SFGUI
     sfg::SFGUI gui;
@@ -59,7 +63,7 @@ int main(int argc, char **argv) {
         }
 
         // Update the simulation controller and view
-        controller.evolve();
+        controller.update();
         view.update();
 
         // Clear the window

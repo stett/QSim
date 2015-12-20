@@ -27,7 +27,7 @@ namespace qsim {
         double real_thickness, imag_thickness, abs2_thickness;
         double ticks_per_pixel;
         double tick_size;
-        double scale;
+        double y_min, y_max;
 
         // 'Tors
     public:
@@ -64,6 +64,7 @@ namespace qsim {
         double tick_count_y(double screen_h);
         double tick_spacing_x(double screen_w);
         double tick_spacing_y(double screen_h);
+        double y_range();
     };
 }
 

@@ -6,7 +6,7 @@ namespace qsim {
 
     // The number of points of precision to keep... must be a power of 2
     const int N         = 512;
-    const int N_HALF    = N/2;
+    const int N_OVER_2  = N/2;
     const int N_TIMES_2 = N*2;
     const int N_SQRT    = (int)sqrt(N);
     const double N_INV  = 1.0/(double)N;

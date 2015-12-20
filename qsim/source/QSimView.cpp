@@ -29,6 +29,8 @@ qsim::QSimView::QSimView(QSimModel *model, QSimController *controller) : model(m
     real_thickness = 3.0;
     imag_thickness = 1.0;
     abs2_thickness = 3.0;
+    y_min = -1.0;
+    y_max = 2.0;
 }
 
 qsim::QSimView::~QSimView() {}
@@ -44,8 +46,8 @@ void qsim::QSimView::handle_event(const sf::Event &event) {
 
     if (event.type == sf::Event::MouseWheelScrolled) {
         float diff = 0.05f * event.mouseWheelScroll.delta;
-        model->set_x_max(model->x_max() - diff);
-        model->set_y_max(model->y_max() - diff);
+        //model->set_x_max(model->x_max() - diff);
+        y_max -= diff;
     }
 }
 
@@ -95,7 +97,7 @@ void qsim::QSimView::render_text(sf::RenderTarget& target, const sf::RenderState
 
 void qsim::QSimView::render_axes(sf::RenderTarget& target, const sf::RenderStates &states) {
     double screen_origin_x = QSIM_COORD_SCREEN_ORIGIN_X(model->x_min(), model->x_range(), target.getSize().x);
-    double screen_origin_y = QSIM_COORD_SCREEN_ORIGIN_Y(model->y_min(), model->y_range(), target.getSize().y);
+    double screen_origin_y = QSIM_COORD_SCREEN_ORIGIN_Y(y_min, y_range(), target.getSize().y);
     render_line(target, states, sf::Vector2f(0.0f, screen_origin_y), sf::Vector2f(target.getSize().x, screen_origin_y), 2.0f, axes_color);
     render_line(target, states, sf::Vector2f(screen_origin_x, 0.0f), sf::Vector2f(screen_origin_x, target.getSize().y), 2.0f, axes_color);
 }
@@ -104,11 +106,11 @@ void qsim::QSimView::render_ticks(sf::RenderTarget& target, const sf::RenderStat
 
     // Temp variables
     double origin_x = QSIM_COORD_SCREEN_ORIGIN_X(model->x_min(), model->x_range(), target.getSize().x);
-    double origin_y = QSIM_COORD_SCREEN_ORIGIN_Y(model->y_min(), model->y_range(), target.getSize().y);
+    double origin_y = QSIM_COORD_SCREEN_ORIGIN_Y(y_min, y_range(), target.getSize().y);
     double space_x, space_y;
     double screen_x, screen_y;
     int count_x, count_y;
-    char   str[10];
+    char   str[128];
 
     // Loop through the space-coordinates for the x-axis tick marks, starting at 0 and looping over
     // NOTE: We skip the first one because the text at the origin overlaps with the x-axis
@@ -118,14 +120,14 @@ void qsim::QSimView::render_ticks(sf::RenderTarget& target, const sf::RenderStat
     for (int n = 1; n < count_x; ++n) {
 
         // Get the screen coordinate
-        screen_x = QSIM_COORD_SPACE_TO_SCREEN_X(space_x, origin_x, target.getSize().x * scale, model->x_range());
+        screen_x = QSIM_COORD_SPACE_TO_SCREEN_X(space_x, origin_x, target.getSize().x, model->x_range());
 
         // Draw this tick mark
         render_line(target, states,
             sf::Vector2f(screen_x, screen_y - tick_size),
             sf::Vector2f(screen_x, screen_y + tick_size), 2.0f, tick_color);
 
-        sprintf(str, "%f", space_x);
+        sprintf(str, "%f [m]", space_x);
         render_text(target, states, screen_x + 2.0, screen_y - tick_size, str);
 
         // Go to the next x-value, looping around if necesarry
@@ -143,20 +145,20 @@ void qsim::QSimView::render_ticks(sf::RenderTarget& target, const sf::RenderStat
     for (int n = 1; n < count_y; ++n) {
 
         // Get the screen coordinate
-        screen_y = QSIM_COORD_SPACE_TO_SCREEN_Y(space_y, origin_y, target.getSize().y, model->y_range());
+        screen_y = QSIM_COORD_SPACE_TO_SCREEN_Y(space_y, origin_y, target.getSize().y, y_range());
 
         // Draw this tick mark
         render_line(target, states,
             sf::Vector2f(screen_x - tick_size, screen_y),
             sf::Vector2f(screen_x + tick_size, screen_y), 2.0f, tick_color);
 
-        sprintf(str, "%f", space_y);
+        sprintf(str, "%f [MeV]", space_y);
         render_text(target, states, screen_x + tick_size * 0.5f, screen_y + 5, str);
 
         // Go to the next x-value, looping around if necesarry
         space_y += tick_spacing_y(target.getSize().y);
-        if (space_y > model->y_range()) {
-            space_y -= model->y_range();
+        if (space_y > y_range()) {
+            space_y -= y_range();
         }
     }
 }
@@ -168,7 +170,7 @@ void qsim::QSimView::render_function_part(sf::RenderTarget& target, const sf::Re
     //static sf::VertexArray vertices(sf::LinesStrip, 2*N);
     double space_x, space_y;
     double screen_x, screen_y;
-    double origin_y = QSIM_COORD_SCREEN_ORIGIN_Y(model->y_min(), model->y_range(), target.getSize().y);
+    double origin_y = QSIM_COORD_SCREEN_ORIGIN_Y(y_min, y_range(), target.getSize().y);
     double thickness = real ? real_thickness : imag_thickness;
 
     // Loop through the points
@@ -180,7 +182,7 @@ void qsim::QSimView::render_function_part(sf::RenderTarget& target, const sf::Re
 
         // Get this point's y-value in space and screen coordinates
         space_y = real ? GSL_COMPLEX_PACKED_REAL(f, 1, n) : GSL_COMPLEX_PACKED_IMAG(f, 1, n);
-        screen_y = QSIM_COORD_SPACE_TO_SCREEN_Y(space_y, origin_y, target.getSize().y, model->y_range());
+        screen_y = QSIM_COORD_SPACE_TO_SCREEN_Y(space_y, origin_y, target.getSize().y, y_range());
 
         // Set this vertex's properties
         vertices[n].position.x = screen_x;
@@ -209,7 +211,7 @@ void qsim::QSimView::render_function_abs2(sf::RenderTarget& target, const sf::Re
     static sf::VertexArray vertices(sf::TrianglesStrip, 2 * N);
     double space_x, space_y;
     double screen_x, screen_y;
-    double origin_y = QSIM_COORD_SCREEN_ORIGIN_Y(model->y_min(), model->y_range(), target.getSize().y);
+    double origin_y = QSIM_COORD_SCREEN_ORIGIN_Y(y_min, y_range(), target.getSize().y);
 
     // Loop through the points
     for (int n = 0; n < N; ++n) {
@@ -219,7 +221,7 @@ void qsim::QSimView::render_function_abs2(sf::RenderTarget& target, const sf::Re
 
         // Get this point's y-value in space and screen coordinates
         space_y = f_abs2[n];
-        screen_y = QSIM_COORD_SPACE_TO_SCREEN_Y(space_y, origin_y, target.getSize().y, model->y_range());
+        screen_y = QSIM_COORD_SPACE_TO_SCREEN_Y(space_y, origin_y, target.getSize().y, y_range());
 
         // Get the color representation of this complex value
         sf::Color color = color_complex(GSL_COMPLEX_PACKED_IMAG(f, 1, n));
@@ -256,5 +258,9 @@ double qsim::QSimView::tick_spacing_x(double screen_w) {
 }
 
 double qsim::QSimView::tick_spacing_y(double screen_h) {
-    return model->y_range() / (screen_h * ticks_per_pixel);
+    return y_range() / (screen_h * ticks_per_pixel);
+}
+
+double qsim::QSimView::y_range() {
+    return y_max - y_min;
 }

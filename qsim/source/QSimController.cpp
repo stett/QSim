@@ -5,7 +5,8 @@ qsim::QSimController::QSimController(QSimModel *model) : model(model), status(Ru
 
 qsim::QSimController::~QSimController() {}
 
-void qsim::QSimController::evolve() {
+void qsim::QSimController::update() {
+    model->evolve();
 }
 
 void qsim::QSimController::quit() {

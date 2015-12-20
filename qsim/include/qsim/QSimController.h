@@ -25,7 +25,7 @@ namespace qsim {
 
         // Public methods
     public:
-        void evolve();
+        void update();
         void quit();
         Status get_status();
     };
