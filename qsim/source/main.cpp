@@ -1,3 +1,4 @@
+#include <string>
 #include <SFML/Graphics.hpp>
 #include <SFGUI/SFGUI.hpp>
 #include "qsim/QSimModel.h"
@@ -5,7 +6,22 @@
 #include "qsim/QSimController.h"
 #include "qsim/WaveFunctionPresets.h"
 
-int main() {
+int main(int argc, char **argv) {
+
+    // Load the font for the view
+    // Get the last position of '/'
+    std::string aux(argv[0]);
+
+    // get '/' or '\\' depending on unix/mac or windows.
+#if defined(_WIN32) || defined(WIN32)
+    int pos = aux.rfind('\\');
+#else
+    int pos = aux.rfind('/');
+#endif
+
+    // Get the path and the name
+    std::string path = aux.substr(0, pos + 1);
+    std::string name = aux.substr(pos + 1);
 
     // Create a window
     sf::RenderWindow window(sf::VideoMode(800, 600), "QSim");
@@ -17,6 +33,9 @@ int main() {
     qsim::QSimModel model(qsim::gaussian_0, qsim::square_well_0);
     qsim::QSimController controller(&model);
     qsim::QSimView view(&model, &controller);
+
+    // Load the font for the view
+    view.set_font(path + std::string("ubuntu_mono_regular.ttf"));
 
     // While the QSim controller says to keep running, keep runnin'
     while (controller.get_status() == qsim::QSimController::Status::Run) {

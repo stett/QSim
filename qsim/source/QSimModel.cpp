@@ -55,13 +55,12 @@ void qsim::QSimModel::evolve() {
 
 void qsim::QSimModel::compute_psi_abs2() {
 
-    /*
     // Initialize the integral (sum of points) to zero
     psi_norm = 0.0;
 
     // Loop through each point
     double y;
-    for (int n = 0; n < NN; n ++) {
+    for (int n = 0; n < N; n ++) {
 
         // Calculate the value at this point
         y = gsl_complex_abs(gsl_complex_rect(GSL_COMPLEX_PACKED_REAL(psi, 1, n),
@@ -77,29 +76,14 @@ void qsim::QSimModel::compute_psi_abs2() {
 
     // Scale the norm calculation (dx = x_range / NN)
     psi_norm *= x_range() * N_INV;
-    */
 }
 
-double qsim::QSimModel::x_min() {
-    return _x_min;
-}
-
-double qsim::QSimModel::x_max() {
-    return _x_max;
-}
-
-double qsim::QSimModel::x_range() {
-    return _x_max - _x_min;
-}
-
-double qsim::QSimModel::y_min() {
-    return _y_min;
-}
-
-double qsim::QSimModel::y_max() {
-    return _y_max;
-}
-
-double qsim::QSimModel::y_range() {
-    return _y_max - _y_min;
-}
+double const *qsim::QSimModel::get_psi() const { return psi; }
+double const *qsim::QSimModel::get_psi_abs2() const { return psi_abs2; }
+double const *qsim::QSimModel::get_V() const { return V; }
+double qsim::QSimModel::x_min() const { return _x_min; }
+double qsim::QSimModel::x_max() const { return _x_max; }
+double qsim::QSimModel::x_range() const { return _x_max - _x_min; }
+double qsim::QSimModel::y_min() const { return _y_min; }
+double qsim::QSimModel::y_max() const { return _y_max; }
+double qsim::QSimModel::y_range() const { return _y_max - _y_min; }

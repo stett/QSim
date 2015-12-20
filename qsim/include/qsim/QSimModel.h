@@ -46,12 +46,15 @@ namespace qsim {
 
         // Getters
     public:
-        double x_min();
-        double x_max();
-        double x_range();
-        double y_min();
-        double y_max();
-        double y_range();
+        double const *get_psi() const;
+        double const *get_psi_abs2() const;
+        double const *get_V() const;
+        double x_min() const;
+        double x_max() const;
+        double x_range() const;
+        double y_min() const;
+        double y_max() const;
+        double y_range() const;
     };
 }
 
