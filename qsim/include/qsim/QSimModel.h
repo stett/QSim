@@ -44,6 +44,13 @@ namespace qsim {
     private:
         void compute_psi_abs2();
 
+        // Setters
+    public:
+        void set_x_min(double x_min);
+        void set_x_max(double x_max);
+        void set_y_min(double y_min);
+        void set_y_max(double y_max);
+
         // Getters
     public:
         double const *get_psi() const;

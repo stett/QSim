@@ -78,6 +78,11 @@ void qsim::QSimModel::compute_psi_abs2() {
     psi_norm *= x_range() * N_INV;
 }
 
+void qsim::QSimModel::set_x_min(double x_min) { _x_min = x_min; }
+void qsim::QSimModel::set_x_max(double x_max) { _x_max = x_max; }
+void qsim::QSimModel::set_y_min(double y_min) { _y_min = y_min; }
+void qsim::QSimModel::set_y_max(double y_max) { _y_max = y_max; }
+
 double const *qsim::QSimModel::get_psi() const { return psi; }
 double const *qsim::QSimModel::get_psi_abs2() const { return psi_abs2; }
 double const *qsim::QSimModel::get_V() const { return V; }

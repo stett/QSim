@@ -27,6 +27,7 @@ namespace qsim {
         double real_thickness, imag_thickness, abs2_thickness;
         double ticks_per_pixel;
         double tick_size;
+        double scale;
 
         // 'Tors
     public:

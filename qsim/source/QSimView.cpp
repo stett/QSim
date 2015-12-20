@@ -41,6 +41,12 @@ void qsim::QSimView::handle_event(const sf::Event &event) {
     // "close requested" event: we close the window
     if (event.type == sf::Event::Closed)
         controller->quit();
+
+    if (event.type == sf::Event::MouseWheelScrolled) {
+        float diff = 0.05f * event.mouseWheelScroll.delta;
+        model->set_x_max(model->x_max() - diff);
+        model->set_y_max(model->y_max() - diff);
+    }
 }
 
 void qsim::QSimView::update() {
@@ -58,6 +64,10 @@ void qsim::QSimView::render(sf::RenderTarget& target, const sf::RenderStates &st
     render_function_part(target, states, model->get_psi(), psi_color, true);
     render_function_part(target, states, model->get_psi(), psi_color, false);
     render_function_abs2(target, states, model->get_psi(), model->get_psi_abs2());
+
+    // Draw the potential well
+    render_function_part(target, states, model->get_V(), V_color, true);
+    //render_function_part(target, states, model->get_V(), V_color, false);
 
     // Draw axes
     render_axes(target, states);
@@ -108,7 +118,7 @@ void qsim::QSimView::render_ticks(sf::RenderTarget& target, const sf::RenderStat
     for (int n = 1; n < count_x; ++n) {
 
         // Get the screen coordinate
-        screen_x = QSIM_COORD_SPACE_TO_SCREEN_X(space_x, origin_x, target.getSize().x, model->x_range());
+        screen_x = QSIM_COORD_SPACE_TO_SCREEN_X(space_x, origin_x, target.getSize().x * scale, model->x_range());
 
         // Draw this tick mark
         render_line(target, states,
@@ -154,8 +164,8 @@ void qsim::QSimView::render_ticks(sf::RenderTarget& target, const sf::RenderStat
 void qsim::QSimView::render_function_part(sf::RenderTarget& target, const sf::RenderStates &states, const double *f, sf::Color color, bool real) {
 
     // Temp variables
-    //static sf::VertexArray vertices(sf::LinesStrip, N);
-    static sf::VertexArray vertices(sf::TrianglesStrip, 2*N);
+    static sf::VertexArray vertices(sf::LinesStrip, N);
+    //static sf::VertexArray vertices(sf::LinesStrip, 2*N);
     double space_x, space_y;
     double screen_x, screen_y;
     double origin_y = QSIM_COORD_SCREEN_ORIGIN_Y(model->y_min(), model->y_range(), target.getSize().y);
@@ -173,6 +183,10 @@ void qsim::QSimView::render_function_part(sf::RenderTarget& target, const sf::Re
         screen_y = QSIM_COORD_SPACE_TO_SCREEN_Y(space_y, origin_y, target.getSize().y, model->y_range());
 
         // Set this vertex's properties
+        vertices[n].position.x = screen_x;
+        vertices[n].position.y = screen_y;
+        vertices[n].color = color;
+        /*
         int i = 2 * n;
         vertices[i].position.x = screen_x;
         vertices[i].position.y = screen_y;
@@ -181,6 +195,7 @@ void qsim::QSimView::render_function_part(sf::RenderTarget& target, const sf::Re
         vertices[i + 1].position.x = screen_x;
         vertices[i + 1].position.y = screen_y + thickness;
         vertices[i + 1].color = color;
+        */
     }
 
     // Draw the vertices
