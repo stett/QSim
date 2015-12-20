@@ -15,7 +15,7 @@ qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0),
     _x_min = -1.0;
     _x_max = 10.0;
     _mass = EMASS;
-    _dt_size = 0.006;
+    _dt_size = 0.0061;
     _dt_iterations = 1;
     //
     // END TEMP
@@ -51,8 +51,13 @@ qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0),
 qsim::QSimModel::~QSimModel() {}
 
 void qsim::QSimModel::evolve() {
+
+    // Update the wave form
     for (int i = 0; i < _dt_iterations; ++i)
         QSimMath::U(this);
+
+    // Update the squared absolute value of the waveform
+    compute_psi_abs2();
 }
 
 void qsim::QSimModel::compute_psi_abs2() {

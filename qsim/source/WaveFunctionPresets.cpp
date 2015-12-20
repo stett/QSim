@@ -15,7 +15,7 @@ gsl_complex qsim::gaussian_0(double x, double x_min, double x_max) {
 }
 
 gsl_complex qsim::square_well_0(double x, double x_min, double x_max) {
-    double V_max        = 6;
+    double V_max        = 1.0;
     double edge_width   = .45 * (x_max - x_min);//.15 * (x_max - x_min);
     return gsl_complex_rect((x < x_min + edge_width || x > x_max - edge_width) ? V_max : 0.0, 0.0);
 }

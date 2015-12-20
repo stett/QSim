@@ -19,8 +19,8 @@ qsim::QSimView::QSimView(QSimModel *model, QSimController *controller) : model(m
     */
 
     // Set up initial settings
-    psi_color = sf::Color(100, 160, 230, 200);
-    V_color = sf::Color(255, 255, 200, 200);
+    psi_color = sf::Color(100, 160, 230, 150);
+    V_color = sf::Color(255, 180, 100, 255);
     axes_color = sf::Color(80, 80, 80);
     text_color = sf::Color(200, 230, 25);
     tick_color = sf::Color(80, 80, 80);
@@ -28,7 +28,7 @@ qsim::QSimView::QSimView(QSimModel *model, QSimController *controller) : model(m
     tick_size = 20.0;
     real_thickness = 3.0;
     imag_thickness = 1.0;
-    abs2_thickness = 3.0;
+    abs2_thickness = 4.5;
     y_min = -1.0;
     y_max = 2.0;
 }
