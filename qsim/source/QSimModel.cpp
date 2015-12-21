@@ -6,10 +6,7 @@
 #include "qsim/QSimConstants.h"
 #include "qsim/QSimCoordinates.h"
 
-
-/*
-qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0), V_0(V_0) {
-
+qsim::QSimModel::QSimModel() {
     //
     // TEMP
     //
@@ -21,36 +18,14 @@ qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0),
     //
     // END TEMP
     //
-
-
-    // Temp vars
-    gsl_complex psi_val;
-    gsl_complex V_val;
-    double x;
-
-    // Loop through the points of the psi and V arrays & save the calculated values
-    for (int n = 0; n < N; n ++) {
-
-        // Find this x-coordinate
-        x = QSIM_COORD_INDEX_TO_SPACE_X(n, x_min(), x_range());
-
-        // Get the values of the psi and V functions at this point
-        psi_val = psi_0(x, x_min(), x_max());
-        V_val   = V_0(x, x_min(), x_max());
-
-        // Record the values
-        GSL_COMPLEX_PACKED_REAL(psi, 1, n) = GSL_REAL(psi_val);
-        GSL_COMPLEX_PACKED_IMAG(psi, 1, n) = GSL_IMAG(psi_val);
-        GSL_COMPLEX_PACKED_REAL(V, 1, n)   = GSL_REAL(V_val);
-        GSL_COMPLEX_PACKED_IMAG(V, 1, n)   = GSL_IMAG(V_val);
-    }
-
-    // Get the initial psi_abs2
-    compute_psi_abs2();
 }
-*/
 
 qsim::QSimModel::~QSimModel() {}
+
+/*
+QSimModel(const QSimModel &model) {}
+QSimModel &operator=(const QSimModel &model) {}
+*/
 
 void qsim::QSimModel::evolve() {
 
@@ -111,7 +86,7 @@ double qsim::QSimModel::x_range() const { return _x_max - _x_min; }
 
 double qsim::QSimModel::K_max() const {
     double _K_max;
-    _K_max = M_PI * HbC * N / _x_range;
+    _K_max = M_PI * HbC * N / x_range();
     _K_max = _K_max * _K_max / (2 * _mass);
     return _K_max;
 }

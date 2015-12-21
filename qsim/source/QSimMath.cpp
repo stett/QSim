@@ -8,12 +8,13 @@ double qsim::QSimMath::alpha(QSimModel *model) {
 }
 
 gsl_complex qsim::QSimMath::lambda(QSimModel *model) {
-    return gsl_complex_exp(gsl_complex_rect(0, -(model->dt_size() / HbC) * (0.5 * model->E_range() + model->E_min())));
+    gsl_complex exponent = gsl_complex_rect(0, -(model->dt_size() / HbC) * (0.5 * model->E_range() + model->E_min()));
+    return gsl_complex_exp(exponent);
 }
 
 int qsim::QSimMath::M(QSimModel *model) {
     double _alpha = alpha(model);
-    return (int)ceil(MAX(20.0, _alpha + 11.38 * pow(_alpha, 0.32))) + 1;
+    return (int)ceil(MAX(20.0, _alpha + 11.38 * pow(_alpha, 0.32)));
 }
 
 void qsim::QSimMath::H(double *f, QSimModel *model) {

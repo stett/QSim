@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "test_QSimMath.h"
 
 int main(int argc, char **argv) {
@@ -12,8 +12,8 @@ int main(int argc, char **argv) {
 }
 
 
-/*
 
+/*
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFGUI/SFGUI.hpp>
@@ -21,7 +21,6 @@ int main(int argc, char **argv) {
 #include "qsim/QSimView.h"
 #include "qsim/QSimController.h"
 #include "qsim/WaveFunctionPresets.h"
-
 
 
 int main(int argc, char **argv) {
@@ -51,6 +50,11 @@ int main(int argc, char **argv) {
     // Initialize SFGUI
     sfg::SFGUI gui;
 
+    //
+    qsim::QSimModel model;
+    qsim::QSimController controller(&model);
+    qsim::QSimView view(&model, &controller);
+
     // Initialize QSim stuff
     double x_min        = 0.0;
     double x_max        = 100.0;
@@ -58,13 +62,10 @@ int main(int argc, char **argv) {
     double k0           = 10.0;
     double alpha        = 1.0;
     double V_max        = 8.0;
-    //double thickness    = 0.48 * (x_max - x_min);
-    double thickness    = 0.1 * (x_max - x_min);
-    qsim::QSimModel model(
-        qsim::Gaussian(x0, k0, alpha),
-        qsim::SquareWell(x_min + thickness, x_max - thickness, V_max));
-    qsim::QSimController controller(&model);
-    qsim::QSimView view(&model, &controller);
+    double thickness    = 0.48 * (x_max - x_min);
+    qsim::Gaussian psi_0(x0, k0, alpha);
+    qsim::SquareBarrier V_0(x_min + thickness, x_max - thickness, V_max);
+    model.set_functions(psi_0, V_0);
 
     // Load the font for the view
     view.set_font(path + std::string("ubuntu_mono_regular.ttf"));

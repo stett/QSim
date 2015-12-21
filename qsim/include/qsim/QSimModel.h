@@ -26,19 +26,17 @@ namespace qsim {
         double _dt_size;        // The amount of time in nanoseconds that each step represents
         int    _dt_iterations;  // The number of times to apply the time evolution operator
         double _x_min, _x_max;  // The left and right boundaries on the x axis
-        double _x_range;        // The distance between the left and right boundaries
 
         // 'Tors
     public:
-        //QSimModel(WaveFunction psi_0, WaveFunction V_0);
-        template<typename Psi0, typename V0>
-        QSimModel(const Psi0 &psi_0, const V0 &V_0);
+        QSimModel();
         ~QSimModel();
 
-        // Non-copyable
-    public:
-        QSimModel(const QSimModel &model) = delete;
-        QSimModel &operator=(const QSimModel &model) = delete;
+        /*
+        // Copying
+        QSimModel(const QSimModel &model);
+        QSimModel &operator=(const QSimModel &model);
+        */
 
         // Public methods
     public:
@@ -50,6 +48,8 @@ namespace qsim {
 
         // Setters
     public:
+        template<typename Psi0, typename V0>
+        void set_functions(const Psi0 &psi_0, const V0 &V_0);
         void set_dt_size(double dt_size);
         void set_dt_iterations(double dt_iterations);
         void set_x_min(double x_min);
@@ -74,19 +74,7 @@ namespace qsim {
     };
 
     template<typename Psi0, typename V0>
-    QSimModel::QSimModel(const Psi0 &psi_0, const V0 &V_0) {
-
-        //
-        // TEMP
-        //
-        _x_min = 0.0;
-        _x_max = 100.0;
-        _mass = EMASS;
-        _dt_size = 0.2;
-        _dt_iterations = 1;
-        //
-        // END TEMP
-        //
+    void QSimModel::set_functions(const Psi0 &psi_0, const V0 &V_0) {
 
         // Temp vars
         gsl_complex psi_val;
@@ -100,8 +88,8 @@ namespace qsim {
             x = QSIM_COORD_INDEX_TO_SPACE_X(n, x_min(), x_range());
 
             // Get the values of the psi and V functions at this point
-            psi_val = psi_0(x);//, x_min(), x_max());
-            V_val   = V_0(x);//, x_min(), x_max());
+            psi_val = psi_0(x);
+            V_val   = V_0(x);
 
             // Record the values
             GSL_COMPLEX_PACKED_REAL(psi, 1, n) = GSL_REAL(psi_val);
