@@ -14,9 +14,14 @@ namespace qsim {
         QSimMath(const QSimMath &math) = delete;
         QSimMath &operator=(const QSimMath &math) = delete;
 
+        // Operator sub-computations
+        static double alpha(QSimModel *model);
+        static gsl_complex lambda(QSimModel *model);
+        static int M(QSimModel *model); ///< Computation for the number of optimal terms in the Chebyshev expansion.
+
         // QM Operators
-        static void H    (double *f, QSimModel *model);
-        static void HNorm(double *f, QSimModel *model);
+        static void H    (double *f, QSimModel *model); ///< The regular Hamiltonian.
+        static void HNorm(double *f, QSimModel *model); ///< The normalized Hamiltonian.
         static void U    (QSimModel *model);
         static void D    (double *f, double x_range);
         static void D2   (double *f, double x_range);

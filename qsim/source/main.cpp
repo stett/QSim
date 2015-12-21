@@ -1,3 +1,19 @@
+
+#include <stdio.h>
+#include "gtest/gtest.h"
+#include "test_QSimMath.h"
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    int err = RUN_ALL_TESTS();
+    char str = ' ';
+    std::cin >> str;
+    return err;
+}
+
+
+/*
+
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFGUI/SFGUI.hpp>
@@ -5,6 +21,8 @@
 #include "qsim/QSimView.h"
 #include "qsim/QSimController.h"
 #include "qsim/WaveFunctionPresets.h"
+
+
 
 int main(int argc, char **argv) {
 
@@ -34,17 +52,17 @@ int main(int argc, char **argv) {
     sfg::SFGUI gui;
 
     // Initialize QSim stuff
-    //qsim::QSimModel model(qsim::gaussian_0, qsim::square_barrier_0);// qsim::square_well_0);
     double x_min        = 0.0;
     double x_max        = 100.0;
     double x0           = (x_min + x_max) * 0.3;
     double k0           = 10.0;
-    double alpha        = 1.5;
-    double V_max        = 4.0;
-    double thickness    = 0.48 * (x_max - x_min);
+    double alpha        = 1.0;
+    double V_max        = 8.0;
+    //double thickness    = 0.48 * (x_max - x_min);
+    double thickness    = 0.1 * (x_max - x_min);
     qsim::QSimModel model(
         qsim::Gaussian(x0, k0, alpha),
-        qsim::SquareBarrier(x_min + thickness, x_max - thickness, V_max));
+        qsim::SquareWell(x_min + thickness, x_max - thickness, V_max));
     qsim::QSimController controller(&model);
     qsim::QSimView view(&model, &controller);
 
@@ -91,3 +109,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+*/

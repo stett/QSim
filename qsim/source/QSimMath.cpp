@@ -3,8 +3,19 @@
 #include "qsim/QSimModel.h"
 #include "qsim/QSimConstants.h"
 
-/// QM Operators
-// The regular and normalized Hamiltonian operators
+double qsim::QSimMath::alpha(QSimModel *model) {
+    return (model->dt_size() * model->E_range()) / (2.0 * Hb);
+}
+
+gsl_complex qsim::QSimMath::lambda(QSimModel *model) {
+    return gsl_complex_exp(gsl_complex_rect(0, -(model->dt_size() / HbC) * (0.5 * model->E_range() + model->E_min())));
+}
+
+int qsim::QSimMath::M(QSimModel *model) {
+    double _alpha = alpha(model);
+    return (int)ceil(MAX(20.0, _alpha + 11.38 * pow(_alpha, 0.32))) + 1;
+}
+
 void qsim::QSimMath::H(double *f, QSimModel *model) {
 
     // Make a copy of the psi array
@@ -31,6 +42,7 @@ void qsim::QSimMath::H(double *f, QSimModel *model) {
         );
     }
 }
+
 void qsim::QSimMath::HNorm(double *f, QSimModel *model) {
 
     // Make a copy of the psi array
@@ -54,17 +66,8 @@ void qsim::QSimMath::HNorm(double *f, QSimModel *model) {
 // Time evolution operator
 void qsim::QSimMath::U(QSimModel *model) {
 
-    // Get the time step size
-    double t = model->dt_size();
-
     // Make a variable to hold the coefficients for the terms in the summation
     double a_m;
-
-    // Find alpha(t)
-    double alpha = (t * model->E_range()) / (2.0 * Hb);
-
-    // Find lambda(t), the factor that resulted from scaling Hnorm
-    gsl_complex lambda = gsl_complex_exp(gsl_complex_rect(0, -(t / HbC) * (0.5 * model->E_range() + model->E_min())));
 
     // Save the first two phi_m(x)'s
     // Zero the model's psi function
@@ -80,11 +83,11 @@ void qsim::QSimMath::U(QSimModel *model) {
     HNorm(phi_1, model);
     multiply_imag(phi_1, -1.0);
 
-    // Calculate the number of terms to keep in the summation
-    int M = (int)ceil(MAX(20.0, alpha + 11.38 * pow(alpha, 0.32))) + 1;
+    //
+    double _alpha = alpha(model);
 
     // Begin summation loop
-    for (int m = 0; m < M; m ++) {
+    for (int m = 0; m < M(model); m ++) {
 
         // Get phi_m
         if (m > 1) { // This is the nth time through, m > 2
@@ -110,7 +113,7 @@ void qsim::QSimMath::U(QSimModel *model) {
         }
 
         // Find the current expansion coefficient, a_m(t)
-        a_m = (m != 0) ? 2.0 * jn(m, alpha) : j0(alpha);
+        a_m = (m != 0) ? 2.0 * jn(m, _alpha) : j0(_alpha);
 
         // Multiply this component by its coefficient & then add it to the accumulating wave packet
         multiply_real(phi_m, a_m);
@@ -118,7 +121,7 @@ void qsim::QSimMath::U(QSimModel *model) {
     }
 
     // Multiply the entire sum by the Hnorm scaling factor, lambda(t)
-    multiply(model->psi, lambda);
+    multiply(model->psi, lambda(model));
 }
 
 // First derivative operator

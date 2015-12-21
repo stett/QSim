@@ -49,7 +49,9 @@ add_custom_command(
     $<TARGET_FILE_DIR:QSim>)
 
 # If we're in debug mode, add the test program
-#if(CMAKE_BUILD_TYPE MATCHES Debug)
-#    add_subdirectory(test)
-#    enable_testing()
-#endif()
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    enable_testing()
+    add_subdirectory(extern/source/googletest)
+    include_directories(${gtest_SOURCE_DIR}/include)
+    target_link_libraries(QSim gtest gtest_main)
+endif()
