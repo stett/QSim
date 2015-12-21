@@ -17,6 +17,11 @@ int qsim::QSimMath::M(QSimModel *model) {
     return (int)ceil(MAX(20.0, _alpha + 11.38 * pow(_alpha, 0.32)));
 }
 
+double qsim::QSimMath::a_m(QSimModel *model, int m) {
+    double _alpha = alpha(model);
+    return (m != 0) ? 2.0 * jn(m, _alpha) : j0(_alpha);
+}
+
 void qsim::QSimMath::H(double *f, QSimModel *model) {
 
     // Make a copy of the psi array
@@ -67,9 +72,6 @@ void qsim::QSimMath::HNorm(double *f, QSimModel *model) {
 // Time evolution operator
 void qsim::QSimMath::U(QSimModel *model) {
 
-    // Make a variable to hold the coefficients for the terms in the summation
-    double a_m;
-
     // Save the first two phi_m(x)'s
     // Zero the model's psi function
     static double phi_0[2*N];
@@ -113,11 +115,8 @@ void qsim::QSimMath::U(QSimModel *model) {
                 phi_m[n] = phi_1[n];
         }
 
-        // Find the current expansion coefficient, a_m(t)
-        a_m = (m != 0) ? 2.0 * jn(m, _alpha) : j0(_alpha);
-
         // Multiply this component by its coefficient & then add it to the accumulating wave packet
-        multiply_real(phi_m, a_m);
+        multiply_real(phi_m, a_m(model, m));
         add(model->psi, phi_m);
     }
 

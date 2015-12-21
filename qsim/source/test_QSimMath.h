@@ -73,6 +73,22 @@ TEST_F(MathematicaComparisonTests, TestChebyshevTermCount) {
     EXPECT_EQ(34, qsim::QSimMath::M(&model));
 }
 
+TEST_F(MathematicaComparisonTests, TestChebyshevTermCoefficient) {
+    EXPECT_CLOSE(-0.2290728865881845,   qsim::QSimMath::a_m(&model, 0));
+    EXPECT_CLOSE(0.2015985052575604,    qsim::QSimMath::a_m(&model, 1));
+    EXPECT_CLOSE(0.499427678477892,     qsim::QSimMath::a_m(&model, 2));
+    EXPECT_CLOSE(0.002939976826354512,  qsim::QSimMath::a_m(&model, 3));
+    EXPECT_CLOSE(0.00001522681397088471,qsim::QSimMath::a_m(&model, 20));
+}
+
+TEST_F(MathematicaComparisonTests, TestHNorm) {
+
+}
+
+TEST_F(MathematicaComparisonTests, TestFFTSecondDerivative) {
+
+}
+
 TEST_F(MathematicaComparisonTests, TestTimeEvolution) {
     model.evolve();
     EXPECT_CLOSE(0.103977507130599, model.get_psi_abs2()[150]);
