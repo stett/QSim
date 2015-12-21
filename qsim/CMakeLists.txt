@@ -47,3 +47,9 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${QSim_SOURCE_DIR}/extern/bin"
     $<TARGET_FILE_DIR:QSim>)
+
+# If we're in debug mode, add the test program
+#if(CMAKE_BUILD_TYPE MATCHES Debug)
+#    add_subdirectory(test)
+#    enable_testing()
+#endif()

@@ -1,1 +1,1 @@
-cd build && cmake -DCMAKE_BUILD_TYPE=Debug ..\qsim && cd ..\
+cd build\win && cmake -DCMAKE_BUILD_TYPE=Debug ..\..\qsim && cd ..\..\

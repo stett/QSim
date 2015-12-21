@@ -39,8 +39,8 @@ qsim::QSimView::QSimView(QSimModel *model, QSimController *controller) : model(m
     real_thickness = 3.0;
     imag_thickness = 1.0;
     abs2_thickness = 6.0;
-    y_min = -1.0;
-    y_max = 2.0;
+    y_min = -0.1;
+    y_max = 1.0;
 }
 
 qsim::QSimView::~QSimView() {}
@@ -138,7 +138,7 @@ void qsim::QSimView::render_ticks(sf::RenderTarget& target, const sf::RenderStat
     double space_x, space_y;
     double screen_x, screen_y;
     int count_x, count_y;
-    char   str[128];
+    char   str[256];
 
     // Loop through the space-coordinates for the x-axis tick marks, starting at 0 and looping over
     // NOTE: We skip the first one because the text at the origin overlaps with the x-axis
@@ -155,7 +155,7 @@ void qsim::QSimView::render_ticks(sf::RenderTarget& target, const sf::RenderStat
             sf::Vector2f(screen_x, screen_y - tick_size),
             sf::Vector2f(screen_x, screen_y + tick_size), 2.0f, tick_color);
 
-        sprintf(str, "%f [m]", space_x);
+        sprintf(str, "%f [nm]", space_x);
         render_text(target, states, screen_x + 2.0, screen_y - tick_size, str);
 
         // Go to the next x-value, looping around if necesarry
@@ -180,7 +180,7 @@ void qsim::QSimView::render_ticks(sf::RenderTarget& target, const sf::RenderStat
             sf::Vector2f(screen_x - tick_size, screen_y),
             sf::Vector2f(screen_x + tick_size, screen_y), 2.0f, tick_color);
 
-        sprintf(str, "%f [MeV]", space_y);
+        sprintf(str, "%f", space_y);
         render_text(target, states, screen_x + tick_size * 0.5f, screen_y + 5, str);
 
         // Go to the next x-value, looping around if necesarry

@@ -7,15 +7,16 @@
 #include "qsim/QSimCoordinates.h"
 
 
+/*
 qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0), V_0(V_0) {
 
     //
     // TEMP
     //
-    _x_min = -1.0;
-    _x_max = 10.0;
+    _x_min = 0.0;
+    _x_max = 100.0;
     _mass = EMASS;
-    _dt_size = 0.006;
+    _dt_size = 0.2;
     _dt_iterations = 1;
     //
     // END TEMP
@@ -47,6 +48,7 @@ qsim::QSimModel::QSimModel(WaveFunction psi_0, WaveFunction V_0) : psi_0(psi_0),
     // Get the initial psi_abs2
     compute_psi_abs2();
 }
+*/
 
 qsim::QSimModel::~QSimModel() {}
 

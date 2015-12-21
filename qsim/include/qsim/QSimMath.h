@@ -1,6 +1,5 @@
 #ifndef QSIMMATH_H
 #define QSIMMATH_H
-
 #include <gsl/gsl.h>
 #include "QSimModel.h"
 #include "QSimConstants.h"

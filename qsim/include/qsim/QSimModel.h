@@ -2,6 +2,7 @@
 #define QSIMMODEL_H
 #include <gsl/gsl_complex.h>
 #include "qsim/QSimConstants.h"
+#include "qsim/QSimCoordinates.h"
 
 namespace qsim {
     class QSimModel {
@@ -11,12 +12,12 @@ namespace qsim {
 
         // Public types
     public:
-        typedef gsl_complex (*WaveFunction)(double x, double x_min, double x_max);
+        //typedef gsl_complex (*WaveFunction)(double x, double x_min, double x_max);
 
         // Private members
     private:
-        WaveFunction psi_0;     // The analytical initial wavefunction, a pointer to a function of the form z=f(x)
-        WaveFunction V_0;       // The analytical potential function, a pointer to a function of the form V=f(x)
+        //WaveFunction psi_0;     // The analytical initial wavefunction, a pointer to a function of the form z=f(x)
+        //WaveFunction V_0;       // The analytical potential function, a pointer to a function of the form V=f(x)
         double psi[2*N];        // The wave function of a the particle
         double psi_abs2[N];     // Since abs(psi)^2 is used in multiple places, we will just always calculate it once
         double psi_norm;        // The integral of abs(psi)^2 ... should always == 1 if psi is normalized
@@ -29,7 +30,9 @@ namespace qsim {
 
         // 'Tors
     public:
-        QSimModel(WaveFunction psi_0, WaveFunction V_0);
+        //QSimModel(WaveFunction psi_0, WaveFunction V_0);
+        template<typename Psi0, typename V0>
+        QSimModel(const Psi0 &psi_0, const V0 &V_0);
         ~QSimModel();
 
         // Non-copyable
@@ -69,6 +72,48 @@ namespace qsim {
         double E_max() const;
         double E_range() const;
     };
+
+    template<typename Psi0, typename V0>
+    QSimModel::QSimModel(const Psi0 &psi_0, const V0 &V_0) {
+
+        //
+        // TEMP
+        //
+        _x_min = 0.0;
+        _x_max = 100.0;
+        _mass = EMASS;
+        _dt_size = 0.2;
+        _dt_iterations = 1;
+        //
+        // END TEMP
+        //
+
+        // Temp vars
+        gsl_complex psi_val;
+        gsl_complex V_val;
+        double x;
+
+        // Loop through the points of the psi and V arrays & save the calculated values
+        for (int n = 0; n < N; n ++) {
+
+            // Find this x-coordinate
+            x = QSIM_COORD_INDEX_TO_SPACE_X(n, x_min(), x_range());
+
+            // Get the values of the psi and V functions at this point
+            psi_val = psi_0(x);//, x_min(), x_max());
+            V_val   = V_0(x);//, x_min(), x_max());
+
+            // Record the values
+            GSL_COMPLEX_PACKED_REAL(psi, 1, n) = GSL_REAL(psi_val);
+            GSL_COMPLEX_PACKED_IMAG(psi, 1, n) = GSL_IMAG(psi_val);
+            GSL_COMPLEX_PACKED_REAL(V, 1, n)   = GSL_REAL(V_val);
+            GSL_COMPLEX_PACKED_IMAG(V, 1, n)   = GSL_IMAG(V_val);
+        }
+
+        // Get the initial psi_abs2
+        compute_psi_abs2();
+    }
 }
+
 
 #endif

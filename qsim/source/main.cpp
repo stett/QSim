@@ -34,7 +34,17 @@ int main(int argc, char **argv) {
     sfg::SFGUI gui;
 
     // Initialize QSim stuff
-    qsim::QSimModel model(qsim::gaussian_0, qsim::square_well_0);
+    //qsim::QSimModel model(qsim::gaussian_0, qsim::square_barrier_0);// qsim::square_well_0);
+    double x_min        = 0.0;
+    double x_max        = 100.0;
+    double x0           = (x_min + x_max) * 0.3;
+    double k0           = 10.0;
+    double alpha        = 1.5;
+    double V_max        = 4.0;
+    double thickness    = 0.48 * (x_max - x_min);
+    qsim::QSimModel model(
+        qsim::Gaussian(x0, k0, alpha),
+        qsim::SquareBarrier(x_min + thickness, x_max - thickness, V_max));
     qsim::QSimController controller(&model);
     qsim::QSimView view(&model, &controller);
 

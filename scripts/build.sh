@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd build &&
-cmake ../qsim/ &&
+cd build/gnu/ &&
+cmake ../../qsim/ &&
 make &&
-cd ../
+cd ../../
