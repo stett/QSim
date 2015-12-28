@@ -82,7 +82,7 @@ namespace qsim {
         double x;
 
         // Loop through the points of the psi and V arrays & save the calculated values
-        for (int n = 0; n < N; n ++) {
+        for (int n = 0; n < N; ++n) {
 
             // Find this x-coordinate
             x = QSIM_COORD_INDEX_TO_SPACE_X(n, x_min(), x_range());

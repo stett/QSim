@@ -1,4 +1,5 @@
 
+/*
 #include <stdio.h>
 #include <gtest/gtest.h>
 #include "test_QSimMath.h"
@@ -10,10 +11,10 @@ int main(int argc, char **argv) {
     std::cin >> str;
     return err;
 }
+*/
 
 
 
-/*
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFGUI/SFGUI.hpp>
@@ -60,8 +61,8 @@ int main(int argc, char **argv) {
     double x_max        = 100.0;
     double x0           = (x_min + x_max) * 0.3;
     double k0           = 10.0;
-    double alpha        = 1.0;
-    double V_max        = 8.0;
+    double alpha        = 1.5;
+    double V_max        = 3.0;
     double thickness    = 0.48 * (x_max - x_min);
     qsim::Gaussian psi_0(x0, k0, alpha);
     qsim::SquareBarrier V_0(x_min + thickness, x_max - thickness, V_max);
@@ -110,4 +111,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-*/

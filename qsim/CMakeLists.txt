@@ -9,7 +9,12 @@ project(QSim)
 if (UNIX)
     add_definitions(-std=c++0x -pthread -Wall -Wextra)
 elseif(WIN32)
-    add_definitions(/Wall)
+    add_definitions(/W4)
+    if (CMAKE_BUILD_TYPE MATCHES Release)
+        add_definitions(/MD)
+    elseif(CMAKE_BUILD_TYPE MATCHES Debug)
+        add_definitions(/MDd)
+    endif()
 endif()
 
 # Include external and internal headers

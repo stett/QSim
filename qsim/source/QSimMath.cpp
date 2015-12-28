@@ -22,6 +22,30 @@ double qsim::QSimMath::a_m(QSimModel *model, int m) {
     return (m != 0) ? 2.0 * jn(m, _alpha) : j0(_alpha);
 }
 
+void qsim::QSimMath::phi_01(QSimModel *model, double *phi_0, double *phi_1) {
+    for (int n = 0; n < 2*N; ++n) {
+        phi_0[n] =
+        phi_1[n] = model->psi[n];
+    }
+    HNorm(phi_1, model);
+    multiply_imag(phi_1, -1.0);
+}
+
+void qsim::QSimMath::phi_01(QSimModel *model, double *phi_m, double *phi_0, double *phi_1) {
+    for (int n = 0; n < 2*N; ++n) {
+        phi_0[n] = phi_1[n];
+        phi_1[n] = phi_m[n];
+    }
+}
+
+void qsim::QSimMath::phi_m(QSimModel *model, double *phi_m, double *phi_0, double *phi_1) {
+    for (int n = 0; n < 2*N; ++n)
+        phi_m[n] = phi_1[n];
+    HNorm(phi_m, model);
+    multiply_imag(phi_m, -2.0);
+    add(phi_m, phi_0);
+}
+
 void qsim::QSimMath::H(double *f, QSimModel *model) {
 
     // Make a copy of the psi array
@@ -60,8 +84,8 @@ void qsim::QSimMath::HNorm(double *f, QSimModel *model) {
     D2(f, model->x_range());
     gsl_complex psi_times_V;
     double neg_Hb2_over_2m = -HbC2 / (2.0 * model->mass());
-    double neg_Emin_minus_DeltaE_over_2 = -(model->E_min() + model->E_range() * .5);
-    double two_over_DeltaE = 2./model->E_range();
+    double neg_Emin_minus_DeltaE_over_2 = -(model->E_min() + model->E_range() * 0.5);
+    double two_over_DeltaE = 2.0 / model->E_range();
     for (int n = 0; n < N; ++n) {
         psi_times_V = gsl_complex_mul(GSL_COMPLEX_PACKED_GET(psi_0, 1, n), GSL_COMPLEX_PACKED_GET(model->get_V(), 1, n));
         GSL_COMPLEX_PACKED_REAL(f, 1, n) = two_over_DeltaE * (GSL_COMPLEX_PACKED_REAL(psi_0, 1, n) * neg_Emin_minus_DeltaE_over_2 + GSL_COMPLEX_PACKED_REAL(f, 1, n) * neg_Hb2_over_2m + GSL_REAL(psi_times_V));
@@ -73,51 +97,39 @@ void qsim::QSimMath::HNorm(double *f, QSimModel *model) {
 void qsim::QSimMath::U(QSimModel *model) {
 
     // Save the first two phi_m(x)'s
-    // Zero the model's psi function
-    static double phi_0[2*N];
-    static double phi_1[2*N];
-    static double phi_m[2*N];
-    for (int n = 0; n < 2*N; ++n) {
-        phi_0[n] =
-        phi_1[n] =
-        phi_m[n] = model->psi[n];
-        model->psi[n] = 0;
-    }
-    HNorm(phi_1, model);
-    multiply_imag(phi_1, -1.0);
+    static double _phi_0[2 * N];
+    static double _phi_1[2 * N];
+    static double _phi_m[2 * N];
+    phi_01(model, _phi_0, _phi_1);
 
-    //
-    double _alpha = alpha(model);
+    // Zero the model's psi function
+    for (int n = 0; n < 2 * N; ++n)
+        model->psi[n] = 0;
 
     // Begin summation loop
-    for (int m = 0; m < M(model); m ++) {
+    for (int m = 0; m < M(model); ++m) {
 
         // Get phi_m
         if (m > 1) { // This is the nth time through, m > 2
 
-            // Find the new phi_m from the previous two.
+            // Find the new phi_m from the previous two, and update
+            // the containers for the previous two phi_m's.
             // NOTE: phi_1 -> phi_m_minus_1
             //       phi_0 -> phi_m_minus_2
-            for (int n = 0; n < 2*N; ++n)
-                phi_m[n] = phi_1[n];
-            HNorm(phi_m, model);
-            multiply_imag(phi_m, -2.0);
-            add(phi_m, phi_0);
+            phi_m(model, _phi_m, _phi_0, _phi_1);
+            phi_01(model, _phi_m, _phi_0, _phi_1);
 
-            // Update the containers for the previous two phi_m's
-            for (int n = 0; n < 2*N; ++n) {
-                phi_0[n] = phi_1[n];
-                phi_1[n] = phi_m[n];
-            }
+        } else {
 
-        } else if (m > 0) { // This is the 2nd time through
-            for (int n = 0; n < 2*N; ++n)
-                phi_m[n] = phi_1[n];
+            // Use phi0 and phi1 for m = 0, 1
+            double *_phi = m > 0 ? _phi_1 : _phi_0;
+            for (int n = 0; n < 2 * N; ++n)
+                _phi_m[n] = _phi[n];
         }
 
-        // Multiply this component by its coefficient & then add it to the accumulating wave packet
-        multiply_real(phi_m, a_m(model, m));
-        add(model->psi, phi_m);
+        // Multiply this phi component by its coefficient & then add it to the accumulating wave packet
+        multiply_real(_phi_m, a_m(model, m));
+        add(model->psi, _phi_m);
     }
 
     // Multiply the entire sum by the Hnorm scaling factor, lambda(t)
@@ -208,12 +220,14 @@ void qsim::QSimMath::sub(double *f_dst, double *f_src) {
 }
 void qsim::QSimMath::multiply(double *f, gsl_complex z) {
     for (int n = 0; n < N; n ++) {
-        GSL_COMPLEX_PACKED_SET(f, 1, n, gsl_complex_mul(GSL_COMPLEX_PACKED_GET(f, 1, n), z));
+        gsl_complex val = gsl_complex_mul(GSL_COMPLEX_PACKED_GET(f, 1, n), z);
+        GSL_COMPLEX_PACKED_SET(f, 1, n, val);
     }
 }
 void qsim::QSimMath::multiply(double *f_dst, double *f_src) {
     for (int n = 0; n < N; n ++) {
-        GSL_COMPLEX_PACKED_SET(f_dst, 1, n, gsl_complex_mul(GSL_COMPLEX_PACKED_GET(f_dst, 1, n), GSL_COMPLEX_PACKED_GET(f_src, 1, n)));
+        gsl_complex val = gsl_complex_mul(GSL_COMPLEX_PACKED_GET(f_dst, 1, n), GSL_COMPLEX_PACKED_GET(f_src, 1, n));
+        GSL_COMPLEX_PACKED_SET(f_dst, 1, n, val);
     }
 }
 void qsim::QSimMath::multiply_real(double *f, double x) {

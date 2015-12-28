@@ -18,7 +18,10 @@ namespace qsim {
         static double alpha(QSimModel *model);
         static gsl_complex lambda(QSimModel *model);
         static int M(QSimModel *model); ///< Computation for the number of optimal terms in the Chebyshev expansion.
-        static double a_m(QSimModel *model, int m);
+        static double  a_m(QSimModel *model, int m);
+        static void phi_01(QSimModel *model, double *phi_0, double *phi_1);
+        static void phi_01(QSimModel *model, double *phi_m, double *phi_0, double *phi_1);
+        static void phi_m(QSimModel *model, double *phi_m, double *phi_0, double *phi_1);
 
         // QM Operators
         static void H    (double *f, QSimModel *model); ///< The regular Hamiltonian.
