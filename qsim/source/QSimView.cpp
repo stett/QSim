@@ -1,4 +1,5 @@
 #include <string>
+#include <functional>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -6,6 +7,7 @@
 #include <SFGUI/Desktop.hpp>
 #include <SFGUI/Label.hpp>
 #include <SFGUI/Box.hpp>
+#include <SFGUI/Button.hpp>
 #include "qsim/QSimView.h"
 #include "qsim/QSimModel.h"
 #include "qsim/QSimCoordinates.h"
@@ -14,19 +16,23 @@
 
 qsim::QSimView::QSimView(QSimModel *model, QSimController *controller) : model(model), controller(controller), frames(0.0f), fps(0.0f) {
 
-    // Set up the GUI controls
+    // Set up the GUI
     auto window = sfg::Window::Create();
     window->SetTitle("Data");
     desktop.Add(window);
 
-    data_box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
-    window->Add(data_box);
+    content_box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+    window->Add(content_box);
 
     fps_label = sfg::Label::Create();
-    data_box->Pack(fps_label);
+    content_box->Pack(fps_label);
 
     norm_label = sfg::Label::Create();
-    data_box->Pack(norm_label);
+    content_box->Pack(norm_label);
+
+    measure_position_btn = sfg::Button::Create("Measure Position");
+    measure_position_btn->GetSignal(sfg::Button::OnLeftClick).Connect(std::bind(&QSimModel::measure, model));
+    content_box->Pack(measure_position_btn);
 
     // Set up initial settings
     psi_color = sf::Color(100, 160, 230, 30);

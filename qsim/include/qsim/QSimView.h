@@ -29,9 +29,10 @@ namespace qsim {
 
         // GUI data
     private:
-        std::shared_ptr<sfg::Box> data_box;
+        std::shared_ptr<sfg::Box> content_box;
         std::shared_ptr<sfg::Label> fps_label;
         std::shared_ptr<sfg::Label> norm_label;
+        std::shared_ptr<sfg::Button> measure_position_btn;
 
         // Settings
     private:

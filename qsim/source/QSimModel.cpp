@@ -1,10 +1,12 @@
 #include <stdexcept>
+#include <random>
 #include <gsl/gsl_complex.h>
 #include "qsim/QSimConstants.h"
 #include "qsim/QSimModel.h"
 #include "qsim/QSimMath.h"
 #include "qsim/QSimConstants.h"
 #include "qsim/QSimCoordinates.h"
+#include "qsim/WaveFunctionPresets.h"
 
 qsim::QSimModel::QSimModel() {
     //
@@ -34,6 +36,22 @@ void qsim::QSimModel::evolve() {
         QSimMath::U(this);
 
     // Update the squared absolute value of the waveform
+    compute_psi_abs2();
+}
+
+void qsim::QSimModel::measure() {
+
+    // Find the index of a random spot on the distribution
+    static std::random_device rd;
+    std::mt19937 gen(rd());
+    std::discrete_distribution<> dist(std::begin(psi_abs2), std::end(psi_abs2));
+    int n_found = dist(gen);
+
+    // Make a sharp gaussian at the point of the measurement
+    qsim::Gaussian gaussian(QSIM_COORD_INDEX_TO_SPACE_X(n_found, x_min(), x_max()), 0.0, 0.2);
+    set_psi(gaussian);
+
+    // Update the abs square
     compute_psi_abs2();
 }
 

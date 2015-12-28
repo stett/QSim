@@ -41,6 +41,7 @@ namespace qsim {
         // Public methods
     public:
         void evolve();
+        void measure();
 
         // Internal methods
     private:
@@ -50,6 +51,8 @@ namespace qsim {
     public:
         template<typename Psi0, typename V0>
         void set_functions(const Psi0 &psi_0, const V0 &V_0);
+        template<typename Psi0>
+        void set_psi(const Psi0 &psi_0);
         void set_dt_size(double dt_size);
         void set_dt_iterations(double dt_iterations);
         void set_x_min(double x_min);
@@ -99,6 +102,19 @@ namespace qsim {
         }
 
         // Get the initial psi_abs2
+        compute_psi_abs2();
+    }
+
+    template<typename Psi0>
+    void QSimModel::set_psi(const Psi0 &psi_0) {
+        gsl_complex psi_val;
+        double x;
+        for (int n = 0; n < N; ++n) {
+            x = QSIM_COORD_INDEX_TO_SPACE_X(n, x_min(), x_range());
+            psi_val = psi_0(x);
+            GSL_COMPLEX_PACKED_REAL(psi, 1, n) = GSL_REAL(psi_val);
+            GSL_COMPLEX_PACKED_IMAG(psi, 1, n) = GSL_IMAG(psi_val);
+        }
         compute_psi_abs2();
     }
 }

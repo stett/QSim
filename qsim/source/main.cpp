@@ -14,7 +14,6 @@ int main(int argc, char **argv) {
 */
 
 
-
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFGUI/SFGUI.hpp>
@@ -59,13 +58,14 @@ int main(int argc, char **argv) {
     // Initialize QSim stuff
     double x_min        = 0.0;
     double x_max        = 100.0;
-    double x0           = (x_min + x_max) * 0.3;
-    double k0           = 10.0;
+    double x0 = (x_min + x_max) * 0.5;//0.3;
+    double k0           = 0.0;//10.0;
     double alpha        = 1.5;
     double V_max        = 3.0;
-    double thickness    = 0.48 * (x_max - x_min);
+    double thickness = (x_max - x_min) * 0.4;//0.48;
     qsim::Gaussian psi_0(x0, k0, alpha);
-    qsim::SquareBarrier V_0(x_min + thickness, x_max - thickness, V_max);
+    //qsim::SquareBarrier V_0(x_min + thickness, x_max - thickness, V_max);
+    qsim::SquareWell V_0(x_min + thickness, x_max - thickness, V_max);
     model.set_functions(psi_0, V_0);
 
     // Load the font for the view

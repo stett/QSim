@@ -230,10 +230,9 @@ TEST_F(MathematicaComparisonTests, TestTimeEvolution) {
     EXPECT_CLOSE(0.3053880717374624, GSL_IMAG(val));
 }
 
-/*
+
 TEST_F(MathematicaComparisonTests, TestNormalization) {
-    qsim::QSimMath::U(&model);
+    model.evolve();
     EXPECT_CLOSE(0.103977507130599, model.get_psi_abs2()[149]);
     EXPECT_CLOSE(0.999999999999969, model.get_psi_norm());
 }
-*/
