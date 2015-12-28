@@ -7,12 +7,12 @@
 
 namespace qsim {
 
-    sf::Color color_complex(double imag) {
-        double arg = imag + M_PI;
+    sf::Color color_complex(const gsl_complex& z) {
+        double arg = gsl_complex_arg(z) + M_PI;
         double hue = arg / (2.0 * M_PI);
         double r, g, b;
         double one_sixth = 1.0 / 6.0;
-        
+
         if (hue > 5.0 * one_sixth) {
             r = 1; g = 0; b = 6.0 * (1.0 - hue);
         } else if (hue > 4.0 * one_sixth) {
@@ -32,10 +32,6 @@ namespace qsim {
             (unsigned int)(255.0 * g),
             (unsigned int)(255.0 * b),
             255);
-    }
-
-    sf::Color color_complex(const gsl_complex& z) {
-        return color_complex(gsl_complex_arg(z));
     }
 
     sf::Color color_complex_circle(const gsl_complex& z) {

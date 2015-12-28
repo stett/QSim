@@ -258,7 +258,7 @@ void qsim::QSimView::render_function_abs2(sf::RenderTarget& target, const sf::Re
         screen_y = QSIM_COORD_SPACE_TO_SCREEN_Y(space_y, origin_y, target.getSize().y, y_range());
 
         // Get the color representation of this complex value
-        sf::Color color = color_complex(GSL_COMPLEX_PACKED_IMAG(f, 1, n));
+        sf::Color color = color_complex(GSL_COMPLEX_PACKED_GET(f, 1, n));
 
         // Set this vertex's properties
         int i = 2 * n;

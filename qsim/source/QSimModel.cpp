@@ -50,6 +50,11 @@ void qsim::QSimModel::measure() {
     // Make a sharp gaussian at the point of the measurement
     qsim::Gaussian gaussian(QSIM_COORD_INDEX_TO_SPACE_X(n_found, x_min(), x_max()), 0.0, 0.2);
     set_psi(gaussian);
+    /*for (int n = 0; n < N; ++n) {
+        gsl_complex val;
+        GSL_SET_COMPLEX(&val, n == n_found ? 1.0 : 0.0, N_INV);
+        GSL_COMPLEX_PACKED_SET(psi, 1, n, val);
+    }*/
 
     // Update the abs square
     compute_psi_abs2();
